@@ -1,5 +1,6 @@
 """
 In this file, the custom LetNet-5 use in the experiment will be recreated.
+Version: 1.0
 """
 from torch import nn
 
@@ -9,7 +10,7 @@ class PhiLetnet(nn.Module):
     The custom LetNet-5 CNN described in the article, defined with the greek letter PHI
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, stride= 1),
@@ -19,7 +20,12 @@ class PhiLetnet(nn.Module):
         )
         self.flatten = nn.Flatten()
         self.classifier = nn.Sequential(
-
+            nn.Linear(in_features=400, out_features=120),
+            nn.ReLU(inplace=True),
+            nn.Linear(in_features=120, out_features=84),
+            nn.ReLU(inplace=True),
+            nn.Linear(in_features=84, out_features=2),
+            nn.LogSoftmax(dim=1)
         )
 
     def forward(self, x_parameter):
