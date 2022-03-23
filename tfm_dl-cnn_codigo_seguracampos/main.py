@@ -8,6 +8,7 @@ BATCH_SIZE = 2500
 LR = 0.01
 EPOCH_COUNT = 150
 DATA_FOLDER = '../data/interim/experiment'
+SEED = 42
 
 def main():
     """Main function. Point of execution"""
