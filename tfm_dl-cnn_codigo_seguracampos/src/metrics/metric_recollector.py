@@ -22,5 +22,5 @@ class MetricRecollector:
     ) -> None:
         """Adds the metrics to the DataFrame"""
         ac_score = accuracy_score(y_true, y_predicted)
-        metrics = metrics.append({'batch_number': batch, 'loss': loss, 'accuracy': ac_score})
+        self.metrics = self.metrics.append({'batch_number': batch, 'loss': loss, 'accuracy': ac_score})
 # TODO: Add more methods over the metrics
