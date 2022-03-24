@@ -14,7 +14,8 @@ def create_train_dataloader(
         seed: int
     ) -> DataLoader:
     """Creates a dataloader for training, with an specific transform"""
-    return _create_dataloader(transform, root, "train", batch_size, seed)
+    folder = join(root, "train")
+    return _create_dataloader(transform, folder, batch_size, seed, True)
 
 
 def create_test_dataloader(
@@ -24,17 +25,18 @@ def create_test_dataloader(
         seed: int
     ) -> DataLoader:
     """Creates a dataloader for testing, with an specific transform"""
-    return _create_dataloader(transform, root, "test", batch_size, seed)
+    folder = join(root, "test")
+    return _create_dataloader(transform, folder, batch_size, seed, False)
 
 
 def _create_dataloader(
         transform: transforms.Compose,
-        root: str,
         folder:str,
         batch_size: int,
-        seed: int
+        seed: int,
+        shuffle: bool
     ) -> DataLoader:
     """Creates a dataloader, with an specific transform"""
     torch.manual_seed(seed)
-    data = datasets.ImageFolder(join(root, folder), transform=transform)
-    return DataLoader(data, batch_size=batch_size, shuffle=True)
+    data = datasets.ImageFolder(folder, transform=transform)
+    return DataLoader(data, batch_size=batch_size, shuffle=shuffle)
