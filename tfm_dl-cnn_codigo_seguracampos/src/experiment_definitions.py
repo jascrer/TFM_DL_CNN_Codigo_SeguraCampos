@@ -2,7 +2,7 @@
 In this file, there will be defined the experiments that are going to be executed
 """
 
-from src.features.experiment_transformations import no_augmentation_transform, flip_transform
+from src.features.transformations import no_augmentation_transform, flip_transform
 from src.data.load_dataset import create_test_dataloader, create_train_dataloader
 from src.experiment_runner import run_experiment
 from src.models.custom_letnet5 import PhiLetnet
