@@ -4,23 +4,36 @@ recollect the accuracy for the training and testing steps.
 Accuracy is the key metric of the project.
 """
 
-import numpy as np
 import pandas as pd
 
-from sklearn.metrics import accuracy_score
+from torch import Tensor
 
 class MetricRecollector:
-    """This class will recollect the loss for the train and the test steps"""
+    """This class will recollect the loss and accuracy for the train and the test steps"""
     def __init__(self) -> None:
-        self.metrics = pd.DataFrame(columns=['batch_number', 'loss', 'accuracy'])
+        self.train_metrics = pd.DataFrame(columns=['batch_number', 'loss', 'accuracy'])
+        self.test_metrics = pd.DataFrame(columns=['batch_number', 'loss', 'accuracy'])
 
-    def add_metrics(self, 
+    def add_train_metrics(self,
         batch:int,
-        y_true: np.array,
-        y_predicted: np.array,
+        accuracy: float,
+        loss: Tensor
+    ) -> None:
+        """Adds the train metrics to the DataFrame"""
+        self.train_metrics = self.train_metrics.append({
+            'batch_number': batch,
+            'loss': loss,
+            'accuracy': accuracy
+        }, ignore_index=True)
+
+    def add_test_metrics(self,
+        batch:int,
+        accuracy: float,
         loss: float
     ) -> None:
-        """Adds the metrics to the DataFrame"""
-        ac_score = accuracy_score(y_true, y_predicted)
-        self.metrics = self.metrics.append({'batch_number': batch, 'loss': loss, 'accuracy': ac_score})
-# TODO: Add more methods over the metrics
+        """Adds the train metrics to the DataFrame"""
+        self.test_metrics = self.test_metrics.append({
+            'batch_number': batch,
+            'loss': loss,
+            'accuracy': accuracy
+        }, ignore_index=True)

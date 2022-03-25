@@ -29,15 +29,24 @@ class ExperimentRunner:
         self.optimizer = optimizer
         self.criterion = criterion
 
-        self.metrics = MetricRecollector()# TODO: Use this property
+        self.metrics = MetricRecollector()
 
     def train_model(self) -> None:
         """Defines the standard process to train a model"""
-        for _, (X_train, y_train) in enumerate(self.train_loader):# TODO: Use the bath number
+        train_corr = 0
+        for batch_number, (X_train, y_train) in enumerate(self.train_loader):
             # Model Application
             y_pred = self.model(X_train)
+
             # Loss calculation
             loss = self.criterion(y_pred,y_train)
+            #Accuracy calculation - TODO: Increase precision, improve code
+            predicted = torch.max(y_pred.data, 1)[1]
+            train_corr += (predicted == y_train).sum()
+            accuracy: float = train_corr.item()/((batch_number+1)*2500)
+            #Recollect metrics
+            self.metrics.add_train_metrics(batch_number, 0, loss.item())
+            print(f'batch number: {batch_number}, accuracy: {accuracy},loss: {loss.item()}')
 
             self.optimizer.zero_grad()
             loss.backward()
@@ -47,10 +56,15 @@ class ExperimentRunner:
     def test_model(self) -> None:
         """Defines the standard process to test a model"""
         with torch.no_grad():
-            for _, (X_test, y_test) in enumerate(self.test_loader):
+            for batch_number, (X_test, y_test) in enumerate(self.test_loader):
                 y_validation = self.model(X_test)
 
-                _ = self.criterion(y_validation, y_test)# TODO: Save the loss
+                # Loss calculation
+                loss = self.criterion(y_validation, y_test)
+                #Accuracy calculation
+                #accuracy: float = accuracy_score(y_test.detach().numpy(),
+                #                                y_validation.detach().numpy())
+                self.metrics.add_test_metrics(batch_number, 0, loss.item())
 
 
 def run_experiment(
@@ -68,8 +82,8 @@ def run_experiment(
         criterion=nn.NLLLoss())
 
     for epoch in range(epoch_count):
-        if epoch%50 ==0:
-            print(f'Epoch: {epoch}/{epoch_count}')
+        #if epoch%50 ==0:
+        print(f'Epoch: {epoch}/{epoch_count}')
         runner.train_model()
 
         runner.test_model()
