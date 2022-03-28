@@ -4,12 +4,12 @@ In this file, it will be defined the functions and classes that will be needed
 to train and test the models.
 """
 from typing import Any
-
+# TODO:from tqdm import tqdm
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
-from src.metrics.metric_recollector import MetricRecollector
+from src.metrics.metric_recollector import MetricRecollector, accuracy_calculation
 
 
 class ExperimentRunner:
@@ -25,65 +25,88 @@ class ExperimentRunner:
     ) -> None:
         self.train_loader = train_loader
         self.test_loader = test_loader
-        self.model = model
+        self.model = model.cuda()
         self.optimizer = optimizer
         self.criterion = criterion
 
         self.metrics = MetricRecollector()
 
-    def train_model(self) -> None:
+    def train_model(self, epoch: int) -> None:
         """Defines the standard process to train a model"""
-        train_corr = 0
-        for batch_number, (X_train, y_train) in enumerate(self.train_loader):
+        correct_predicted: int = 0
+        data_size: int = 0
+        for batch_number, (X_train, y_train) in enumerate(self.train_loader): # TODO: tqdm(enumerate(self.train_loader), desc="something", ncols=80):
+            # Collect size for accuracy measure
+            data_size += X_train.size(0)
+            #Convert to CUDA
+            X_train = X_train.cuda()
+            y_train = y_train.cuda()
             # Model Application
             y_pred = self.model(X_train)
 
             # Loss calculation
-            loss = self.criterion(y_pred,y_train)
-            #Accuracy calculation - TODO: Increase precision, improve code
-            predicted = torch.max(y_pred.data, 1)[1]
-            train_corr += (predicted == y_train).sum()
-            accuracy: float = train_corr.item()/((batch_number+1)*2500)
+            loss: torch.Tensor = self.criterion(y_pred,y_train)
+            #Accuracy calculation
+            accuracy, correct_predicted = accuracy_calculation(
+                y_true=y_train,
+                y_pred=y_pred,
+                data_size=data_size,
+                correct_predicted=correct_predicted
+            )
             #Recollect metrics
-            self.metrics.add_train_metrics(batch_number, 0, loss.item())
-            print(f'batch number: {batch_number}, accuracy: {accuracy},loss: {loss.item()}')
+            self.metrics.add_train_metrics(epoch,batch_number, accuracy, loss.item())
 
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
 
 
-    def test_model(self) -> None:
+    def test_model(self, epoch: int) -> None:
         """Defines the standard process to test a model"""
         with torch.no_grad():
+            correct_predicted: int = 0
+            data_size: int = 0
             for batch_number, (X_test, y_test) in enumerate(self.test_loader):
+                # Collect size for accuracy measure
+                data_size += X_test.size(0)
+
+                #Convert to CUDA
+                X_test = X_test.cuda()
+                y_test = y_test.cuda()
+                # Model evaluation
                 y_validation = self.model(X_test)
 
                 # Loss calculation
                 loss = self.criterion(y_validation, y_test)
                 #Accuracy calculation
-                #accuracy: float = accuracy_score(y_test.detach().numpy(),
-                #                                y_validation.detach().numpy())
-                self.metrics.add_test_metrics(batch_number, 0, loss.item())
+                accuracy, correct_predicted = accuracy_calculation(
+                    y_true=y_test,
+                    y_pred=y_validation,
+                    data_size=data_size,
+                    correct_predicted=correct_predicted
+                )
+                self.metrics.add_test_metrics(epoch,batch_number, accuracy, loss.item())
 
 
 def run_experiment(
         epoch_count: int,
         train_dataloader: DataLoader,
         test_dataloader: DataLoader,
-        lr: float,
-        model: nn.Module) -> None:
+        learning_rate: float,
+        model: nn.Module) -> MetricRecollector:
     """Runs the experiment"""
     runner = ExperimentRunner(
         train_loader=train_dataloader,
         test_loader=test_dataloader,
         model=model,
-        optimizer=torch.optim.Adam(model.parameters(), lr=lr),
+        optimizer=torch.optim.Adam(model.parameters(), lr=learning_rate),
         criterion=nn.NLLLoss())
 
     for epoch in range(epoch_count):
-        #if epoch%50 ==0:
-        print(f'Epoch: {epoch}/{epoch_count}')
-        runner.train_model()
+        if epoch%50 ==0:
+            print(f'Epoch: {epoch}/{epoch_count}')
+        runner.train_model(epoch)
 
-        runner.test_model()
+        runner.test_model(epoch)
+
+    return runner.model, runner.metrics
