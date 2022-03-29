@@ -4,7 +4,7 @@ In this file, it will be defined the functions and classes that will be needed
 to train and test the models.
 """
 from typing import Any
-# TODO:from tqdm import tqdm
+from tqdm import tqdm
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -35,7 +35,7 @@ class ExperimentRunner:
         """Defines the standard process to train a model"""
         correct_predicted: int = 0
         data_size: int = 0
-        for batch_number, (X_train, y_train) in enumerate(self.train_loader): # TODO: tqdm(enumerate(self.train_loader), desc="something", ncols=80):
+        for batch_number, (X_train, y_train) in enumerate(self.train_loader):
             # Collect size for accuracy measure
             data_size += X_train.size(0)
             #Convert to CUDA
@@ -102,9 +102,7 @@ def run_experiment(
         optimizer=torch.optim.Adam(model.parameters(), lr=learning_rate),
         criterion=nn.NLLLoss())
 
-    for epoch in range(epoch_count):
-        if epoch%50 ==0:
-            print(f'Epoch: {epoch}/{epoch_count}')
+    for epoch in tqdm(range(epoch_count), desc='Epoch', ncols=epoch_count):
         runner.train_model(epoch)
 
         runner.test_model(epoch)

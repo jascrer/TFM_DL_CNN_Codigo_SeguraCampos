@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """
 In this file, it will be defined the necessary classes and functions to
 recollect the accuracy for the training and testing steps.
