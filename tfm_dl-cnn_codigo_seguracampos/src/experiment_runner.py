@@ -60,7 +60,6 @@ class ExperimentRunner:
             loss.backward()
             self.optimizer.step()
 
-
     def test_model(self, epoch: int) -> None:
         """Defines the standard process to test a model"""
         with torch.no_grad():
@@ -86,7 +85,6 @@ class ExperimentRunner:
                     correct_predicted=correct_predicted
                 )
                 self.metrics.add_test_metrics(epoch,batch_number, accuracy, loss.item())
-
 
 def run_experiment(
         epoch_count: int,

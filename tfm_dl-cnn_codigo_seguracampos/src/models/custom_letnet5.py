@@ -21,9 +21,7 @@ class PhiLetnet(nn.Module):
         self.flatten = nn.Flatten()
         self.classifier = nn.Sequential(
             nn.Linear(in_features=400, out_features=120),
-            nn.ReLU(inplace=True),
             nn.Linear(in_features=120, out_features=84),
-            nn.ReLU(inplace=True),
             nn.Linear(in_features=84, out_features=2),
             nn.LogSoftmax(dim=1)
         )

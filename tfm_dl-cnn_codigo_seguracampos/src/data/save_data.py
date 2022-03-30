@@ -8,6 +8,7 @@ from torch.nn import Module
 from src.metrics.metric_recollector import MetricRecollector
 
 DATA_PROCESSED_FOLDER = 'data/processed'
+MODELS_FOLDER = 'models'
 
 def save_experiment_data(
     experiment: str,
@@ -15,6 +16,7 @@ def save_experiment_data(
     metrics: MetricRecollector) -> None:
     """Function to save experiment data"""
     experiment_folder = join(DATA_PROCESSED_FOLDER, experiment.lower())
-    torch.save(model.state_dict(),
-        join(experiment_folder, f'{experiment.lower()}.pt'))
     metrics.save_metrics(experiment_folder)
+    models_folder = join(MODELS_FOLDER, experiment.lower())
+    torch.save(model.state_dict(),
+        join(models_folder, f'{experiment.lower()}.pt'))

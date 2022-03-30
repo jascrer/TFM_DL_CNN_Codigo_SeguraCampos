@@ -20,7 +20,7 @@ def main():
     phi_experiment_no_transform(EPOCH_COUNT, BATCH_SIZE, SEED, LR)
 
     # Execution of the experiment for PHI Model with flip augmentation transformations
-    phi_experiment_flip_transform(EPOCH_COUNT, BATCH_SIZE, SEED, LR)
+    # phi_experiment_flip_transform(EPOCH_COUNT, BATCH_SIZE, SEED, LR)
 
 if __name__ == "__main__":
     main()
