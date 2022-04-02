@@ -17,6 +17,5 @@ def save_experiment_data(
     """Function to save experiment data"""
     experiment_folder = join(DATA_PROCESSED_FOLDER, experiment.lower())
     metrics.save_metrics(experiment_folder)
-    models_folder = join(MODELS_FOLDER, experiment.lower())
     torch.save(model.state_dict(),
-        join(models_folder, f'{experiment.lower()}.pt'))
+        join(MODELS_FOLDER, f'{experiment.lower()}.pt'))

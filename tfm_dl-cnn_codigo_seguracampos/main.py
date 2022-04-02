@@ -10,7 +10,7 @@ from src.experiment_definitions import phi_experiment_flip_transform, phi_experi
 warnings.filterwarnings('ignore')
 
 BATCH_SIZE = 2500
-LR = 0.01
+LR = 0.001
 EPOCH_COUNT = 150
 SEED = 42
 
@@ -20,7 +20,7 @@ def main():
     phi_experiment_no_transform(EPOCH_COUNT, BATCH_SIZE, SEED, LR)
 
     # Execution of the experiment for PHI Model with flip augmentation transformations
-    # phi_experiment_flip_transform(EPOCH_COUNT, BATCH_SIZE, SEED, LR)
+    phi_experiment_flip_transform(EPOCH_COUNT, BATCH_SIZE, SEED, LR)
 
 if __name__ == "__main__":
     main()
