@@ -1,15 +1,14 @@
 """
 In this file, there will be defined the experiments that are going to be executed
 """
-#from os.path import join
 from time import time
 from enum import Enum, auto
 
-#import torch
 from src.data.save_data import save_experiment_data
-from src.features.transformations import no_augmentation_transform, flip_transform
+from src.features.transformations import no_augmentation_transform, flip_transform, alex_flip_transform, alex_no_augmentation_transform
 from src.data.load_dataset import create_test_dataloader, create_train_dataloader
 from src.experiment_runner import run_experiment
+from src.models.alexnet import AlexNet
 from src.models.custom_letnet5 import PhiLetnet
 
 class Experiments(Enum):
@@ -24,13 +23,13 @@ def log_experiments(experiment_name: str,
     """Logs in console when an experiment has finished"""
     print(f'Experiment - {experiment_name} - has finished in {execution_time/60} minutes')
 
-def phi_experiment_no_transform(
+def phi_model_no_transform(
         epoch_count: int,
         batch_size: int,
         seed: int,
         learning_rate: float
     ) -> None:
-    """Function to run the original experiment - No augmentation in the data"""
+    """Function to run the original model - No augmentation in the data"""
     train_dataloader = create_train_dataloader(
         transform=no_augmentation_transform,
         batch_size=batch_size,
@@ -54,13 +53,13 @@ def phi_experiment_no_transform(
     log_experiments(Experiments.PHI_NO_AUG.name.lower(), end_time-start_time)
     save_experiment_data(Experiments.PHI_NO_AUG.name, model, metrics)
 
-def phi_experiment_flip_transform(
+def phi_model_flip_transform(
         epoch_count: int,
         batch_size: int,
         seed: int,
         learning_rate: float
     ) -> None:
-    """Function to run the original experiment - No augmentation in the data"""
+    """Function to run the original model - Flip augmentation in the data"""
     train_dataloader = create_train_dataloader(
         transform=flip_transform,
         batch_size=batch_size,
@@ -74,7 +73,7 @@ def phi_experiment_flip_transform(
     phi_model=PhiLetnet()
 
     start_time = time()
-    model, metrics= run_experiment(epoch_count,
+    model, metrics = run_experiment(epoch_count,
         train_dataloader,
         test_dataloader,
         learning_rate,
@@ -83,3 +82,63 @@ def phi_experiment_flip_transform(
     end_time = time()
     log_experiments(Experiments.PHI_FLIP.name.lower(), end_time-start_time)
     save_experiment_data(Experiments.PHI_FLIP.name, model, metrics)
+
+def alexnet_model_no_transform(
+        epoch_count: int,
+        batch_size: int,
+        seed: int,
+        learning_rate: float
+    ) -> None:
+    """Function to run the AlexNet model - No augmentation in the data"""
+    train_dataloader = create_train_dataloader(
+        transform=alex_no_augmentation_transform,
+        batch_size=batch_size,
+        seed=seed)
+
+    test_dataloader = create_test_dataloader(
+        transform=alex_no_augmentation_transform,
+        batch_size=batch_size,
+        seed=seed)
+
+    alex_model = AlexNet()
+
+    start_time = time()
+    model, metrics = run_experiment(epoch_count,
+        train_dataloader,
+        test_dataloader,
+        learning_rate,
+        alex_model
+    )
+    end_time = time()
+    log_experiments(Experiments.ALEX_NO_AUG.name.lower(), end_time-start_time)
+    save_experiment_data(Experiments.ALEX_NO_AUG.name.lower(), model, metrics)
+
+def alexnet_model_flip_transform(
+        epoch_count: int,
+        batch_size: int,
+        seed: int,
+        learning_rate: float
+    ) -> None:
+    """Function to run the AlexNet model - No augmentation in the data"""
+    train_dataloader = create_train_dataloader(
+        transform=alex_flip_transform,
+        batch_size=batch_size,
+        seed=seed)
+
+    test_dataloader = create_test_dataloader(
+        transform=alex_flip_transform,
+        batch_size=batch_size,
+        seed=seed)
+
+    alex_model = AlexNet()
+
+    start_time = time()
+    model, metrics = run_experiment(epoch_count,
+        train_dataloader,
+        test_dataloader,
+        learning_rate,
+        alex_model
+    )
+    end_time = time()
+    log_experiments(Experiments.ALEX_FLIP.name.lower(), end_time-start_time)
+    save_experiment_data(Experiments.ALEX_FLIP.name.lower(), model, metrics)

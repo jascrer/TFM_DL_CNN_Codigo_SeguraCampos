@@ -21,3 +21,19 @@ flip_transform = transforms.Compose([
     transforms.Normalize(MEAN_VECTOR,
                         STD_VECTOR)
 ])
+
+alex_no_augmentation_transform = transforms.Compose([
+    transforms.Resize(224),
+    transforms.ToTensor(),
+    transforms.Normalize(MEAN_VECTOR,
+                        STD_VECTOR)
+])
+
+alex_flip_transform = transforms.Compose([
+    transforms.Resize(224),
+    transforms.RandomVerticalFlip(p=0.5),
+    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.ToTensor(),
+    transforms.Normalize(MEAN_VECTOR,
+                        STD_VECTOR)
+])

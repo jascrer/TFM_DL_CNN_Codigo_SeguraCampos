@@ -30,12 +30,12 @@ class AlexNet(nn.Module):
         self.flatten = nn.Flatten()
         self.classifier = nn.Sequential(
             nn.Dropout(p=0.5),
-            nn.Linear(in_features=9216, out_features=1024),
+            nn.Linear(in_features=6400, out_features=4096),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
-            nn.Linear(in_features=1024,out_features=2),
+            nn.Linear(in_features=4096,out_features=4096),
             nn.ReLU(inplace=True),
-            nn.Dropout(p=0.5),
+            nn.Linear(in_features=4096, out_features=2),
             nn.LogSoftmax(dim=1)
         )
 
