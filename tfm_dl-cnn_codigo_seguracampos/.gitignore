@@ -89,5 +89,6 @@ target/
 .mypy_cache/
 
 # Adding processed data from alex no aug
-tfm_dl-cnn_codigo_seguracampos/data/processed/alex_no_aug/train.csv
-tfm_dl-cnn_codigo_seguracampos/data/processed/alex_no_aug/testc.csv
+data/processed/alex_no_aug/train.csv
+data/processed/alex_no_aug/test.csv
+models/alex_no_aug.pt
