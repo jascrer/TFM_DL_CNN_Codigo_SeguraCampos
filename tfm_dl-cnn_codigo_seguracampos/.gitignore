@@ -92,3 +92,4 @@ target/
 data/processed/alex_no_aug/train.csv
 data/processed/alex_no_aug/test.csv
 models/alex_no_aug.pt
+models/alex_flip.pt
