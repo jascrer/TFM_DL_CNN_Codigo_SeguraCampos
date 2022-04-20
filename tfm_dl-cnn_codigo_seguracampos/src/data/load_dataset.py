@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-DATA_FOLDER = 'data/interim/experiment'
+DATA_FOLDER = 'data/interim'
 
 def create_train_dataloader(
         transform: transforms.Compose,
@@ -15,7 +15,7 @@ def create_train_dataloader(
         seed: int
     ) -> DataLoader:
     """Creates a dataloader for training, with an specific transform"""
-    folder = join(DATA_FOLDER, "train")
+    folder = join(DATA_FOLDER, "training_set")
     return _create_dataloader(transform, folder, batch_size, seed, True)
 
 
@@ -25,7 +25,7 @@ def create_test_dataloader(
         seed: int
     ) -> DataLoader:
     """Creates a dataloader for testing, with an specific transform"""
-    folder = join(DATA_FOLDER, "test")
+    folder = join(DATA_FOLDER, "validation_set")
     return _create_dataloader(transform, folder, batch_size, seed, False)
 
 

@@ -10,7 +10,7 @@ def no_augmentation_creator(image_resize: int
     ) -> transforms.Compose:
     """Creates the No Augmentation transform with the new size for the images"""
     no_augmentation_transform = transforms.Compose([
-        transforms.Resize(image_resize),
+        transforms.Resize((image_resize,image_resize)),
         transforms.ToTensor(),
         transforms.Normalize(MEAN_VECTOR,
                             STD_VECTOR)
@@ -21,7 +21,7 @@ def flip_creator(image_resize: int
     ) -> transforms.Compose:
     """Creates the Flip Augmentation transform with the new size for the images"""
     flip_transform = transforms.Compose([
-        transforms.Resize(image_resize),
+        transforms.Resize((image_resize,image_resize)),
         transforms.RandomVerticalFlip(p=0.5),
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.ToTensor(),
